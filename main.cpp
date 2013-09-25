@@ -60,7 +60,7 @@ int main()
 			//printf("%d ",j);
 			if(function.get_func(len[j],func,140))
 			{
-				evals[j] = Evaluate.get_eval(func,def_func, 140);
+				evals[j] = int(Evaluate.get_eval(func,def_func, 140)*100000);
 			} else {
 				evals[j] = 2147483647;
 			}

@@ -18,7 +18,7 @@ void GACore::generate(int generation,int**vals,int size,int num,int numLeg)
 	int i,j,numleg=numLeg;
 	if(generation==1){
 		for(i=0;i<num;i++){
-			for(j=0;j<numleg;j++){
+			for(j=0;j<numleg-1;j++){
 				vals[i][j]=rand()%2048;
 			}
 			vals[i][numleg-1] = FIXED_VALUE;
@@ -36,8 +36,8 @@ void GACore::generate(int generation,int**vals,int size,int num,int numLeg)
 		GACore::mutation(vals, size, numLeg);
 		
 		for(i=0;i<num;i++){
-			for(j=0;j<numleg;j++){
-				vals[i][j]=vals[i%50][j];
+			for(j=0;j<numleg-1;j++){
+				vals[i][j]=vals[i%50][j]*(0.95+0.1/num*i);
 			}
 		}
 	}
@@ -85,7 +85,7 @@ void GACore::crossover(int**vals,int size,int numLeg)
 			for(k=0;k<numLeg-1;k++)
 			{
 				small=smaller(vals[p1][k],vals[p2][k]);
-				for(t = 1; (int)small/t==0; t*=2, maxsize++);
+				for(t = 1; small<t; t*=2, maxsize++);
 				cut=rand()%(maxsize+1);                        //이 사이즈는 0101010101의 사이즈다
 				temp[k]=vals[p1][k]%(int)pow(2.0,cut);
 				vals[p1][k]=vals[p1][k]-(vals[p1][k]%(int)pow(2.0,cut))+(vals[p2][k]%(int)pow(2.0,cut));
@@ -100,7 +100,7 @@ void GACore::crossover(int**vals,int size,int numLeg)
 			for(k=0;k<numLeg-1;k++)
 			{
 				small=smaller(vals[p1][k],vals[p2][k]);
-				for(t = 1; (int)small/t==0; t*=2, maxsize++);
+				for(t = 1; small<t; t*=2, maxsize++);
 				cut=rand()%(maxsize+1);                        //이 사이즈는 0101010101의 사이즈다
 				temp[k]=vals[p1][k]%(int)pow(2.0,cut);
 				vals[p1][k]=vals[p1][k]-(vals[p1][k]%(int)pow(2.0,cut))+(vals[p2][k]%(int)pow(2.0,cut));
