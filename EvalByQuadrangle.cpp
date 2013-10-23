@@ -1,4 +1,5 @@
 #include<vector>
+#include<stack>
 #include"EvalByQuadrangle.h"
 using namespace std;
 
@@ -6,97 +7,182 @@ using namespace std;
 double EvalByQuadrangle::get_eval(pair<double,double>*func, pair<double,double>*def_func, int _size)
 {
 	double eval=0;
+	
+	int i;
+
 	int mxX=0, mxY=0, mnX=0, mnY=0;
 	int XY=0, Xy=0, xY=0, xy=0;
+
 	int fmxX=0, fmxY=0, fmnX=0, fmnY=0;
 	int fXY=0, fXy=0, fxY=0, fxy=0;
-	double delta;
-	double midX;
-	double a[8], b[8];
-	//int p1[7], p2[7];
-	for(int i=0;i<_size;i++)
+	
+	stack<pair<int, int>> order;
+	stack<pair<int, int>> forder;
+	
+	pair<int, int> tObject;
+	pair<int, int> aaa, bbb;
+	
+	double diff, midX;
+	double a[10], b[10];
+	
+	for(i=0;i<_size;i++)
 	{
 		if(func[i].first>func[mxX].first) mxX = i;
-		else if(func[i].second>func[mxY].second) mxY = i;
-		else if(func[i].first<func[mnX].first) mnX = i;
-		else if(func[i].second<func[mnY].second) mnY = i;
+		if(func[i].second>func[mxY].second) mxY = i;
+		if(func[i].first<func[mnX].first) mnX = i;
+		if(func[i].second<func[mnY].second) mnY = i;
 		
 		if(def_func[i].first>def_func[fmxX].first) fmxX = i;
-		else if(def_func[i].second>def_func[fmxY].second) fmxY = i;
-		else if(def_func[i].first<def_func[fmnX].first) fmnX = i;
-		else if(def_func[i].second<def_func[fmnY].second) fmnY = i;
+		if(def_func[i].second>def_func[fmxY].second) fmxY = i;
+		if(def_func[i].first<def_func[fmnX].first) fmnX = i;
+		if(def_func[i].second<def_func[fmnY].second) fmnY = i;
 	}
 	
-	midX = (func[mxX].first+func[mxY].first)/2;
-	delta = 2147483647;
-	for(int i = min(mxX, mxY); i < max(mxX, mxY); i++)
+	//mxX : 1, mnX : 2, mxY : 3, mnY : 4;
+
+	for(i=_size-1;i>=0;i--)
 	{
-		if(delta > abs(midX-func[i].first)){
-			delta = abs(midX-func[i].first);
-			XY = i;
+		if(i == mxX){
+			pair<int, int> o;
+			o.first = i;
+			o.second = 1;
+			order.push(o);
+		}
+		if(i == mxY){
+			pair<int, int> o;
+			o.first = i;
+			o.second = 3;
+			order.push(o);
+		}
+		if(i == mnX){
+			pair<int, int> o;
+			o.first = i;
+			o.second = 2;
+			order.push(o);
+		}
+		if(i == mnY){
+			pair<int, int> o;
+			o.first = i;
+			o.second = 4;
+			order.push(o);
+		}
+		
+		if(i == fmxX){
+			pair<int, int> o;
+			o.first = i;
+			o.second = 1;
+			forder.push(o);
+		}
+		if(i == fmxY){
+			pair<int, int> o;
+			o.first = i;
+			o.second = 3;
+			forder.push(o);
+		}
+		if(i == fmnX){
+			pair<int, int> o;
+			o.first = i;
+			o.second = 2;
+			forder.push(o);
+		}
+		if(i == fmnY){
+			pair<int, int> o;
+			o.first = i;
+			o.second = 4;
+			forder.push(o);
 		}
 	}
-	midX = (func[mnX].first+func[mxY].first)/2;
-	delta = 2147483647;
-	for(int i = min(mnX, mxY); i < max(mnX, mxY); i++)
+	
+	
+	bbb = order.top();
+	order.pop();
+	tObject = aaa = bbb;
+	bbb = order.top();
+	order.pop();
+	midX = (func[aaa.first].first+func[bbb.first].first)/2;
+	diff = 2147483647;
+	i = aaa.first;
+	while(true)
 	{
-		if(delta > abs(midX-func[i].first)){
-			delta = abs(midX-func[i].first);
-			xY = i;
+		i++;
+		if(diff >= abs(midX-func[i%_size].first)){
+			diff = abs(midX-func[i%_size].first);
+			if(aaa.second==1){
+				if(bbb.second==3) XY = i%_size;
+				if(bbb.second==4) Xy = i%_size;
+			}
+			if(aaa.second==2){
+				if(bbb.second==3) xY = i%_size;
+				if(bbb.second==4) xy = i%_size;
+			}
+			if(aaa.second==3){
+				if(bbb.second==1) XY = i%_size;
+				if(bbb.second==2) xY = i%_size;
+			}
+			if(aaa.second==4){
+				if(bbb.second==1) Xy = i%_size;
+				if(bbb.second==2) xy = i%_size;
+			}
+		} else {
+			if(order.empty()){
+				if(tObject.first == -2) break;
+				else{
+					order.push(tObject);
+					tObject.first = -2;
+				}
+			}
+			aaa = bbb;
+			bbb = order.top();
+			order.pop();
+			midX = (func[aaa.first].first+func[bbb.first].first)/2;
+			diff = 2147483647;
+			i = aaa.first;
 		}
 	}
-	midX = (func[mxX].first+func[mnY].first)/2;
-	delta = 2147483647;
-	for(int i = min(mxX, mnY); i < max(mxX, mnY); i++)
+	
+	bbb = forder.top();
+	forder.pop();
+	tObject = aaa = bbb;
+	bbb = forder.top();
+	forder.pop();
+	midX = (def_func[aaa.first].first+def_func[bbb.first].first)/2;
+	diff = 2147483647;
+	i = aaa.first;
+	while(true)
 	{
-		if(delta > abs(midX-func[i].first)){
-			delta = abs(midX-func[i].first);
-			Xy = i;
-		}
-	}
-	midX = (func[mnX].first+func[mnY].first)/2;
-	delta = 2147483647;
-	for(int i = min(mnX, mnY); i < max(mnX, mnY); i++)
-	{
-		if(delta > abs(midX-func[i].first)){
-			delta = abs(midX-func[i].first);
-			xy = i;
-		}
-	}
-	midX = (func[fmxX].first+func[fmxY].first)/2;
-	delta = 2147483647;
-	for(int i = min(fmxX, fmxY); i < max(fmxX, fmxY); i++)
-	{
-		if(delta > abs(midX-func[i].first)){
-			delta = abs(midX-func[i].first);
-			fXY = i;
-		}
-	}
-	midX = (func[fmnX].first+func[fmxY].first)/2;
-	delta = 2147483647;
-	for(int i = min(fmnX, fmxY); i < max(fmnX, fmxY); i++)
-	{
-		if(delta > abs(midX-func[i].first)){
-			delta = abs(midX-func[i].first);
-			fxY = i;
-		}
-	}
-	midX = (func[fmxX].first+func[fmnY].first)/2;
-	delta = 2147483647;
-	for(int i = min(fmxX, fmnY); i < max(fmxX, fmnY); i++)
-	{
-		if(delta > abs(midX-func[i].first)){
-			delta = abs(midX-func[i].first);
-			fXy = i;
-		}
-	}
-	midX = (func[fmnX].first+func[fmnY].first)/2;
-	delta = 2147483647;
-	for(int i = min(fmnX, fmnY); i < max(fmnX, fmnY); i++)
-	{
-		if(delta > abs(midX-func[i].first)){
-			delta = abs(midX-func[i].first);
-			fxy = i;
+		i++;
+		if(diff >= abs(midX-def_func[i%_size].first)){
+			diff = abs(midX-def_func[i%_size].first);
+			if(aaa.second==1){
+				if(bbb.second==3) fXY = i%_size;
+				if(bbb.second==4) fXy = i%_size;
+			}
+			if(aaa.second==2){
+				if(bbb.second==3) fxY = i%_size;
+				if(bbb.second==4) fxy = i%_size;
+			}
+			if(aaa.second==3){
+				if(bbb.second==1) fXY = i%_size;
+				if(bbb.second==2) fxY = i%_size;
+			}
+			if(aaa.second==4){
+				if(bbb.second==1) fXy = i%_size;
+				if(bbb.second==2) fxy = i%_size;
+			}
+		} else {
+			if(forder.empty()){
+				if(tObject.first == -2) break;
+				else{
+					forder.push(tObject);
+					tObject.first = -2;
+				}
+			}
+			aaa = bbb;
+			bbb = forder.top();
+			forder.pop();
+			midX = (def_func[aaa.first].first+def_func[bbb.first].first)/2;
+			diff = 2147483647;
+			i = aaa.first;
 		}
 	}
 	
@@ -118,7 +204,7 @@ double EvalByQuadrangle::get_eval(pair<double,double>*func, pair<double,double>*
 	b[6] = EvalByQuadrangle::getDist(def_func[fmnY], def_func[fXy]);
 	b[7] = EvalByQuadrangle::getDist(def_func[fXy], def_func[fmxX]);
 
-	for(int i=0;i<8;i++){
+	for(i=0;i<8;i++){
 		for(int j=0;j<8;j++){
 			if( i!=j ) eval += max( a[i]*b[j]/a[j]/b[i], a[j]*b[i]/a[i]/b[j] );
 		}
