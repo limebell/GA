@@ -64,7 +64,7 @@ void GACore::crossover(int**vals,int size,int numLeg)
 			for(k=0;k<numLeg-1;k++)
 			{
 				small=smaller(vals[p1][k],vals[p2][k]);
-				for(t=1; (int)small/t==0; t*=2, maxsize++);
+				for(t=1; small<t; t*=2, maxsize++);
 				cut=rand()%(maxsize+1);                        //이 사이즈는 0101010101의 사이즈다
 				temp[k]=vals[p1][k]%(int)pow(2.0,cut);
 				vals[p1][k]=vals[p1][k]-(vals[p1][k]%(int)pow(2.0,cut))+(vals[p2][k]%(int)pow(2.0,cut));
