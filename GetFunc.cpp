@@ -35,55 +35,6 @@ bool GetFunc::get_func(int *size, pair<double,double> *func, int num)
 		point[2].first = point[0].first + size[12]*cos(theta);
 		point[2].second = point[0].second + size[12]*sin(theta);
 
-		/*
-	
-		//3
-		temp = GetFunc::getPoint1(point[1], point[2], size[1], size[9]);
-		if( temp.first == false ) return false;
-		else{
-			if((point[2].second-point[1].second)*(temp.second.first-point[1].first)/(point[2].first-point[1].first)+point[1].second-temp.second.second>0){
-				point[3] = temp.second;
-			} else point[3] = GetFunc::getPoint2(point[1], point[2], size[1], size[9]).second;
-		}
-	
-		//4
-		temp = GetFunc::getPoint1(point[1], point[3], size[3], size[4]);
-		if( temp.first == false ) return false;
-		else{
-			if( isOpposite(point[1], point[3], point[2], temp.second) ) point[4] = temp.second;
-			else point[4] = GetFunc::getPoint2(point[1], point[3], size[3], size[4]).second;
-		}
-	
-		//5
-		temp = GetFunc::getPoint1(point[1], point[2], size[2], size[10]);
-		if( temp.first == false ) return false;
-		else{
-			if( isOpposite(point[1], point[2], point[3], temp.second) ) point[5] = temp.second;
-			else point[5] = GetFunc::getPoint2(point[1], point[2], size[2], size[10]).second;
-		}
-	
-		//6
-		temp = GetFunc::getPoint1(point[4], point[5], size[5], size[6]);
-		if( temp.first == false ) return false;
-		else{
-			if( isOpposite(point[4], point[5], point[1], temp.second) ) point[6] = temp.second;
-			else point[6] = GetFunc::getPoint2(point[4], point[5], size[5], size[6]).second;
-		}
-	
-		//7
-		temp = GetFunc::getPoint1(point[5], point[6], size[8], size[7]);
-		if( temp.first == false ) return false;
-		else{
-			if( temp.second.second > point[5].second && temp.second.second > point[6].second ) point[7] = temp.second;
-			else{
-				temp = GetFunc::getPoint2(point[5], point[6], size[8], size[7]);
-				if( temp.second.second > point[5].second && temp.second.second > point[6].second ) point[7] = temp.second;
-				else return false;
-			}
-		}
-
-		*/
-
 		//3
 		temp1 = GetFunc::getPoint1(point[1], point[2], size[1], size[9]);
 		temp2 = GetFunc::getPoint2(point[1], point[2], size[1], size[9]);

@@ -123,7 +123,8 @@ double EvalByQuadrangle::get_eval(pair<double,double>*func, pair<double,double>*
 				if(bbb.second==1) Xy = i%_size;
 				if(bbb.second==2) xy = i%_size;
 			}
-		} else {
+		}
+		if( (aaa.first>bbb.first&&i>=bbb.first+_size) || (aaa.first<=bbb.first&&i>=bbb.first) ){
 			if(order.empty()){
 				if(tObject.first == -2) break;
 				else{
@@ -169,7 +170,8 @@ double EvalByQuadrangle::get_eval(pair<double,double>*func, pair<double,double>*
 				if(bbb.second==1) fXy = i%_size;
 				if(bbb.second==2) fxy = i%_size;
 			}
-		} else {
+		}
+		if( (aaa.first>bbb.first&&i>=bbb.first+_size) || (aaa.first<=bbb.first&&i>=bbb.first) ){
 			if(forder.empty()){
 				if(tObject.first == -2) break;
 				else{
@@ -206,10 +208,10 @@ double EvalByQuadrangle::get_eval(pair<double,double>*func, pair<double,double>*
 
 	for(i=0;i<8;i++){
 		for(int j=0;j<8;j++){
-			if( i!=j ) eval += max( a[i]*b[j]/a[j]/b[i], a[j]*b[i]/a[i]/b[j] );
+			if( a[i]==0||a[j]==0||b[i]==0||b[j]==0 ) continue;
+			else if( i!=j ) eval += max( (double)(a[i]*b[j])/(a[j]*b[i]), (double)(a[j]*b[i])/(a[i]*b[j]) );
 		}
 	}
-	
 	return eval;
 }
 
