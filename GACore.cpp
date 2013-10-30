@@ -32,10 +32,10 @@ void GACore::generate(int generation,int**vals,int size,int num,int numLeg)
 			vals[i][numleg-1] = FIXED_VALUE;
 		}
 		
-		GACore::crossover(vals, size, numLeg);
-		GACore::mutation(vals, size, numLeg);
+		//GACore::crossover(vals, size, numLeg);
+		//GACore::mutation(vals, size, numLeg);
 		
-		for(i=0;i<num;i++){
+		for(i=50;i<num;i++){
 			for(j=0;j<numleg-1;j++){
 				vals[i][j]=vals[i%50][j]*(0.95+0.1/num*i);
 			}
