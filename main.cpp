@@ -15,8 +15,8 @@ using namespace std;
 
 #define LEG_SIZE 10
 #define NUM_LEGS 13
-#define NUM_PER_GENERATION 1000
-#define MAX_GENERATION 100
+#define NUM_PER_GENERATION 5000
+#define MAX_GENERATION 70
 
 int qsortByEval(double* eval, int** len, int left, int right);
 	
@@ -37,19 +37,16 @@ int main()
 	def_func = (pair<double,double>*)malloc(NumFuncPoints*sizeof(pair<double,double>));
 	func = (pair<double,double>*)malloc(NumFuncPoints*sizeof(pair<double,double>));
 	evals = (double*)malloc(NUM_PER_GENERATION*sizeof(double));
-	
-	for(int i=0;i<NumFuncPoints;i++) scanf("%f %f\n",&def_func[i].first,&def_func[i].second);
+
+	for (int i = 0; i<NumFuncPoints; i++) scanf("%lf, %lf\n", &def_func[i].first, &def_func[i].second);
+
+//	for (int i = 0; i<NumFuncPoints; i++) printf("%lf %lf\n", def_func[i].first, def_func[i].second);
 	
 	len = (int**)malloc(NUM_PER_GENERATION*sizeof(int*));
 	for(int i = 0; i < NUM_PER_GENERATION;i++)
 	{
 		*(len+i) = (int*)malloc(NUM_LEGS*sizeof(int));
 	}
-	
-	/*for(int i=0;i<NUM_LEGS;i++)
-	{
-		len[i] = (double*)malloc(LEG_SIZE*sizeof(char));
-	}*/
 
 	for(int i=1;i<=MAX_GENERATION;i++)
 	{
@@ -57,13 +54,13 @@ int main()
 		printf("\n%d번째 세대\n",i);
 		for(int j=0;j<NUM_PER_GENERATION;j++)
 		{
-			//printf("%d ",j);
 			if(function.get_func(len[j],func,140))
 			{
-				evals[j] = int(Evaluate.get_eval(func,def_func, 140)*100000);
+				evals[j] = Evaluate.get_eval(func,def_func, 140);
 			} else {
-				evals[j] = 2147483647;
+				evals[j] = 1000000000;
 			}
+//			printf("%lf\n",evals[j]);
 		}
 		qsortByEval(evals, len, 0, NUM_PER_GENERATION-1);
 		for(int j=0;j<20;j++)
@@ -73,16 +70,17 @@ int main()
 			{
 				printf("%d, ",len[j][k]);
 			}
-			printf("\n");
+			printf("EVAL : %lf\n",evals[j]);
 		}
 	}
 	for(int i=0;i<NUM_PER_GENERATION;i++)
 	{
+		printf("LENGH : ");
 		for(int j=0;j<NUM_LEGS;j++)
 		{
 			printf("%d, ", len[i][j]);
 		}
-		printf("\n-----------------------------------------------\n");
+		printf("EVAL : %lf\n", evals[i]);
 	}
 }
 

@@ -23,6 +23,19 @@ void GACore::generate(int generation,int**vals,int size,int num,int numLeg)
 			}
 			vals[i][numleg-1] = FIXED_VALUE;
 		}
+		/*vals[0][0] = 324;
+		vals[0][1] = 354;
+		vals[0][2] = 335;
+		vals[0][3] = 342;
+		vals[0][4] = 476;
+		vals[0][5] = 336;
+		vals[0][6] = 313;
+		vals[0][7] = 561;
+		vals[0][8] = 418;
+		vals[0][9] = 427;
+		vals[0][10] = 528;
+		vals[0][11] = 67;
+		vals[0][12] = 128;*/
 	}
 	else{
 		for(i=num-1;i>49;i--){
@@ -32,12 +45,12 @@ void GACore::generate(int generation,int**vals,int size,int num,int numLeg)
 			vals[i][numleg-1] = FIXED_VALUE;
 		}
 		
-		//GACore::crossover(vals, size, numLeg);
-		//GACore::mutation(vals, size, numLeg);
+		GACore::crossover(vals, size, numLeg);
+		GACore::mutation(vals, size, numLeg);
 		
 		for(i=50;i<num;i++){
 			for(j=0;j<numleg-1;j++){
-				vals[i][j]=vals[i%50][j]*(0.95+0.1/num*i);
+				vals[i][j]=vals[i%50][j]*(0.5+0.15/num*i);
 			}
 		}
 	}
@@ -112,7 +125,7 @@ void GACore::crossover(int**vals,int size,int numLeg)
 
 void GACore::mutation(int**vals,int size,int numLeg)
 {
-	/*int i,j,k,temp1,temp2=0;
+	int i,j,k,temp1,temp2=0;
 	for(i=0;i<20;i++){
 		for(j=0;j<numLeg-1;j++){
 			for(k=0;k<size;k++){
@@ -125,5 +138,5 @@ void GACore::mutation(int**vals,int size,int numLeg)
 					vals[i][j]=vals[i][j]-(int)pow(2.0,size-k);
 			}
 		}
-	}*/
+	}
 }

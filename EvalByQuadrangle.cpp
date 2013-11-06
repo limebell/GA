@@ -24,6 +24,10 @@ double EvalByQuadrangle::get_eval(pair<double,double>*func, pair<double,double>*
 	
 	double diff, midX;
 	double a[10], b[10];
+
+	double areaA=0, areaB=0;
+	stack<pair<double, double>> pointsA;
+	stack<pair<double, double>> pointsB;
 	
 	for(i=0;i<_size;i++)
 	{
@@ -206,16 +210,50 @@ double EvalByQuadrangle::get_eval(pair<double,double>*func, pair<double,double>*
 	b[6] = EvalByQuadrangle::getDist(def_func[fmnY], def_func[fXy]);
 	b[7] = EvalByQuadrangle::getDist(def_func[fXy], def_func[fmxX]);
 
-	for(i=0;i<8;i++){
-		for(int j=0;j<8;j++){
-			if( a[i]==0||a[j]==0||b[i]==0||b[j]==0 ) continue;
-			else if( i!=j ) eval += max( (double)(a[i]*b[j])/(a[j]*b[i]), (double)(a[j]*b[i])/(a[i]*b[j]) );
-		}
-	}
+	pointsA.push( func[mxX] );
+	pointsA.push( func[XY] );
+	pointsA.push( func[mxY] );
+	pointsA.push( func[xY] );
+	pointsA.push( func[mnX] );
+	pointsA.push( func[xy] );
+	pointsA.push( func[mnY] );
+	pointsA.push( func[Xy] );
+	pointsA.push( func[mxX] );
+
+	pointsB.push( def_func[fmxX] );
+	pointsB.push( def_func[fXY] );
+	pointsB.push( def_func[fmxY] );
+	pointsB.push( def_func[fxY] );
+	pointsB.push( def_func[fmnX] );
+	pointsB.push( def_func[fxy] );
+	pointsB.push( def_func[fmnY] );
+	pointsB.push( def_func[fXy] );
+	pointsB.push( def_func[fmxX] );
+
+	areaA = getArea(pointsA);
+	areaB = getArea(pointsB);
+
+	if(areaA==0||areaB==0) eval = 1000000000;
+	else for(i=0;i<8;i++) eval += abs(a[i]*sqrt(areaB/areaA)-b[i]);
 	return eval;
 }
 
 double EvalByQuadrangle::getDist(pair<double,double> a, pair<double,double> b)
 {
 	return sqrt((a.first-b.first)*(a.first-b.first)+(a.second-b.second)*(a.second-b.second));
+}
+
+double EvalByQuadrangle::getArea(stack<pair<double, double>>points)
+{
+	double area = 0;
+	pair<double, double> a, b;
+	b = points.top();
+	points.pop();
+	while (points.size()>0){
+		a = b;
+		b = points.top();
+		points.pop();
+		area = area + a.first*b.second - b.first*a.second;
+	}
+	return abs(area) / 2;
 }

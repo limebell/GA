@@ -1,4 +1,5 @@
 #include<vector>
+#include<stack>
 using namespace std;
 
 /*
@@ -15,6 +16,7 @@ class EvalByQuadrangle
 public:
 	double get_eval(pair<double,double>*func, pair<double,double>*def_func, int _size);
 	double getDist(pair<double,double> a,pair<double,double> b);
+	double getArea(stack<pair<double,double>>points);
 };
 
 #endif
