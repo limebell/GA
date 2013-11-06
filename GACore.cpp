@@ -12,11 +12,12 @@ using namespace std;
 유전알고리즘에서 필요한것? -> 교차, 교배, 돌연변이
 */
 int GACore::smaller(int x,int y){return x<y?x:y;}
-void GACore::generate(int generation,int**vals,int size,int num,int numLeg)
+void GACore::generate(int regenerate,int**vals,int size,int num,int numLeg)
 {
 	srand((unsigned)time(NULL));
 	int i,j,numleg=numLeg;
-	if(generation==1){
+	if(regenerate==0){
+		printf("restart!");
 		for(i=0;i<num;i++){
 			for(j=0;j<numleg-1;j++){
 				vals[i][j]=rand()%2048;
@@ -45,12 +46,12 @@ void GACore::generate(int generation,int**vals,int size,int num,int numLeg)
 			vals[i][numleg-1] = FIXED_VALUE;
 		}
 		
-		GACore::crossover(vals, size, numLeg);
-		GACore::mutation(vals, size, numLeg);
+		//GACore::crossover(vals, size, numLeg);
+		//GACore::mutation(vals, size, numLeg);
 		
 		for(i=50;i<num;i++){
 			for(j=0;j<numleg-1;j++){
-				vals[i][j]=vals[i%50][j]*(0.5+0.15/num*i);
+				vals[i][j] = vals[i % 50][j] * (0.7+double(rand() % 600)/1000);
 			}
 		}
 	}
@@ -125,17 +126,21 @@ void GACore::crossover(int**vals,int size,int numLeg)
 
 void GACore::mutation(int**vals,int size,int numLeg)
 {
-	int i,j,k,temp1,temp2=0;
+	int i,j,k,temp1,temp2=0,maxsize=0;
 	for(i=0;i<20;i++){
 		for(j=0;j<numLeg-1;j++){
-			for(k=0;k<size;k++){
+			for (k = 1; k < size; k=k * 2){
+				maxsize++;
+			}
+			for(k=0;k<maxsize;k++){
 				temp1=rand()%100;
-				if(temp1<k*k/sqrt(k))
-					temp2=(vals[i][j]/(int)pow(2.0,size-k-1))%2;
-				if(temp2==0)
-					vals[i][j]=vals[i][j]+(int)pow(2.0,size-k);
-				if(temp2==1)
-					vals[i][j]=vals[i][j]-(int)pow(2.0,size-k);
+				if (temp1<k*k / sqrt(k)){
+					temp2 = (vals[i][j] / (int)pow(2.0, maxsize - k - 1)) % 2;
+					if (temp2 == 0)
+						vals[i][j] = vals[i][j] + (int)pow(2.0, maxsize - k);
+					if (temp2 == 1)
+						vals[i][j] = vals[i][j] - (int)pow(2.0, maxsize - k);
+				}
 			}
 		}
 	}

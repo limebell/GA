@@ -104,7 +104,9 @@ bool GetFunc::get_func(int *size, pair<double,double> *func, int num)
 			point[7] = (GetFunc::f_distance(temp1.second, ppoint[7])<GetFunc::f_distance(temp2.second, ppoint[7]))?temp1.second:temp2.second;
 			ppoint[7] = point[7];
 		}
-
+		for (int j = 0; j < 7; j++){
+			if (point[j].second > point[7].second) return false;
+		}
 		func[i] = point[7];
 	}
 

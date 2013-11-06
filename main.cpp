@@ -15,8 +15,10 @@ using namespace std;
 
 #define LEG_SIZE 10
 #define NUM_LEGS 13
-#define NUM_PER_GENERATION 5000
-#define MAX_GENERATION 70
+#define NUM_PER_GENERATION 2000
+#define MAX_GENERATION 300
+#define OPTIMUM_RADIUS 50
+#define MAX_REPEAT 7
 
 int qsortByEval(double* eval, int** len, int left, int right);
 	
@@ -26,43 +28,87 @@ int main()
 	GACore CoreFunction;
 	EvalByQuadrangle Evaluate;
 	int NumFuncPoints;
-	pair<double,double>*def_func;
-	pair<double,double>*func;
+	pair<double, double>*def_func;
+	pair<double, double>*func;
 	int **len;
 	double *evals;
+
+	int **optimalLen;
+	bool flag;
+	int index = 0;
+	int count = MAX_REPEAT;
+	double localMinimum[5] = { -1, };
 	
-	freopen("input.txt","rt",stdin);
-	freopen("output.txt","wt",stdout);
-	scanf("%d\n",&NumFuncPoints);
-	def_func = (pair<double,double>*)malloc(NumFuncPoints*sizeof(pair<double,double>));
-	func = (pair<double,double>*)malloc(NumFuncPoints*sizeof(pair<double,double>));
+	freopen("input.txt", "rt", stdin);
+	freopen("output.txt", "wt", stdout);
+	scanf("%d\n", &NumFuncPoints);
+	def_func = (pair<double, double>*)malloc(NumFuncPoints*sizeof(pair<double, double>));
+	func = (pair<double, double>*)malloc(NumFuncPoints*sizeof(pair<double, double>));
 	evals = (double*)malloc(NUM_PER_GENERATION*sizeof(double));
 
-	for (int i = 0; i<NumFuncPoints; i++) scanf("%lf, %lf\n", &def_func[i].first, &def_func[i].second);
-
-//	for (int i = 0; i<NumFuncPoints; i++) printf("%lf %lf\n", def_func[i].first, def_func[i].second);
+	for (int i = 0; i < NumFuncPoints; i++) scanf("%lf, %lf\n", &def_func[i].first, &def_func[i].second);
 	
 	len = (int**)malloc(NUM_PER_GENERATION*sizeof(int*));
-	for(int i = 0; i < NUM_PER_GENERATION;i++)
+	for (int i = 0; i < NUM_PER_GENERATION; i++)
 	{
-		*(len+i) = (int*)malloc(NUM_LEGS*sizeof(int));
+		*(len + i) = (int*)malloc(NUM_LEGS*sizeof(int));
 	}
 
-	for(int i=1;i<=MAX_GENERATION;i++)
+	optimalLen = (int**)malloc(MAX_GENERATION*sizeof(int*));
+	for (int i = 0; i < MAX_GENERATION; i++)
 	{
-		CoreFunction.generate(i,len,LEG_SIZE,NUM_PER_GENERATION,NUM_LEGS);
-		printf("\n%d번째 세대\n",i);
-		for(int j=0;j<NUM_PER_GENERATION;j++)
+		*(optimalLen + i) = (int*)malloc(NUM_LEGS*sizeof(int));
+	}
+
+	evals[0] = OPTIMUM_RADIUS + 1;
+	for (int i = 0; i < MAX_GENERATION; i++)
+	{
+		//최적화조건
+		if (evals[0] < OPTIMUM_RADIUS){
+			for (int j = 0; j < NUM_LEGS; j++){
+				optimalLen[index][j] = len[0][j];
+			}
+			index++;
+			break;
+		}
+		
+		//유전 알고리즘
+		CoreFunction.generate(count - MAX_REPEAT, len, LEG_SIZE, NUM_PER_GENERATION, NUM_LEGS);
+		printf("%d번째 세대\n", i+1);
+		for (int j = 0; j < NUM_PER_GENERATION; j++)
 		{
-			if(function.get_func(len[j],func,140))
+			if (function.get_func(len[j], func, 140))
 			{
-				evals[j] = Evaluate.get_eval(func,def_func, 140);
-			} else {
+				evals[j] = Evaluate.get_eval(func, def_func, 140);
+			}
+			else {
 				evals[j] = 1000000000;
 			}
-//			printf("%lf\n",evals[j]);
+			//printf("%lf\n",evals[j]);
 		}
-		qsortByEval(evals, len, 0, NUM_PER_GENERATION-1);
+		qsortByEval(evals, len, 0, NUM_PER_GENERATION - 1);
+
+		//극소탈출부분
+		if (count == MAX_REPEAT){
+			count = 0;
+		}
+		flag = true;
+		for (int j = 0; j < 5; j++){
+			if (evals[j] != localMinimum[j]) flag = false;
+		}
+		if (flag) count += 1;
+		else{
+			for (int j = 0; j < 5; j++) localMinimum[j] = evals[j];
+			count = 0;
+		}
+		if (count == MAX_REPEAT){
+			for (int j = 0; j < NUM_LEGS; j++){
+				optimalLen[index][j] = len[0][j];
+			}
+			index += 1;
+		}
+
+		//출력부분
 		for(int j=0;j<20;j++)
 		{
 			printf("%d : ",j+1);
@@ -73,7 +119,13 @@ int main()
 			printf("EVAL : %lf\n",evals[j]);
 		}
 	}
-	for(int i=0;i<NUM_PER_GENERATION;i++)
+
+	for (int j = 0; j < NUM_LEGS; j++){
+		optimalLen[index][j] = len[0][j];
+	}
+	index++;
+
+	/*for(int i=0;i<NUM_PER_GENERATION;i++)
 	{
 		printf("LENGH : ");
 		for(int j=0;j<NUM_LEGS;j++)
@@ -81,6 +133,15 @@ int main()
 			printf("%d, ", len[i][j]);
 		}
 		printf("EVAL : %lf\n", evals[i]);
+	}*/
+
+	for (int i = 0; i < index; i++) {
+		printf("LENGH : ");
+		for (int j = 0; j < NUM_LEGS; j++){
+			printf("%d, ", optimalLen[i][j]);
+		}
+		function.get_func(optimalLen[i], func, 140);
+		printf("EVAL : %lf\n", Evaluate.get_eval(func, def_func, 140));
 	}
 }
 

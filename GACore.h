@@ -13,7 +13,7 @@ class  GACore
 	
 public:
 	int smaller(int x,int y);
-	void generate(int generation, int**vals,int size,int num,int numLeg);
+	void generate(int regenerate, int**vals,int size,int num,int numLeg);
 	void crossover(int**vals,int size,int numLeg);
 	void mating();
 	void mutation(int**vals,int size,int numLeg);
